@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -37,8 +38,47 @@ public class StationControllerTest {
 	
 	@MockBean
 	private StationMapper stationmapper;
-
-	String mockStation = "{\"stationId\":\"11\",\"name\":\"Jazz\",\"hdEnabled\":true,\"callSign\":\"KMNR\"}";
+	
+	
+	Station mockStation1 = new Station("Nine","Jazz",true,"KUII");
+	Station mockStation2 = new Station("Ten","90s",true,"KFYR");
+	String mockStation = "{\"stationId\":\"Eleven\",\"name\":\"Jazz\",\"hdEnabled\":true,\"callSign\":\"KMNR\"}";
+	@SuppressWarnings("serial")
+	List<Station> mockStations = new ArrayList<Station>(){{add(mockStation1);add(mockStation2);}};
+	
+	@Test
+	public void getStationById_Test() throws Exception {		
+		Mockito.when(stationdao.getStation(Mockito.anyString())).thenReturn(mockStation1);
+		RequestBuilder request = MockMvcRequestBuilders
+				.get("/stations/Nine")
+				.accept(MediaType.APPLICATION_JSON);		
+		MvcResult result = mockMvc.perform(request).andReturn();
+		String expected = "{\"stationId\":\"Nine\",\"name\":\"Jazz\",\"hdEnabled\":true,\"callSign\":\"KUII\"}";
+		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
+	}
+	@Test
+	public void getStationByName_Test() throws Exception {		
+		Mockito.when(stationdao.getStationByName(Mockito.anyString())).thenReturn(mockStations);
+		RequestBuilder request = MockMvcRequestBuilders
+				.get("/stations/name/Jazz")
+				.accept(MediaType.APPLICATION_JSON);		
+		MvcResult result = mockMvc.perform(request).andReturn();
+		String expected = "[{\"stationId\":\"Nine\",\"name\":\"Jazz\",\"hdEnabled\":true,\"callSign\":\"KUII\"},"
+				+ "{\"stationId\":\"Ten\",\"name\":\"90s\",\"hdEnabled\":true,\"callSign\":\"KFYR\"}]";
+		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
+	}
+	@Test
+	public void getAllStations_Test() throws Exception {
+		
+		Mockito.when(stationdao.getAllStations()).thenReturn(mockStations);
+		RequestBuilder request = MockMvcRequestBuilders
+				.get("/stations")
+				.accept(MediaType.APPLICATION_JSON);		
+		MvcResult result = mockMvc.perform(request).andReturn();
+		String expected = "[{\"stationId\":\"Nine\",\"name\":\"Jazz\",\"hdEnabled\":true,\"callSign\":\"KUII\"},"
+				+ "{\"stationId\":\"Ten\",\"name\":\"90s\",\"hdEnabled\":true,\"callSign\":\"KFYR\"}]";
+		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
+	}
 	@Test
 	public void addStation_Test() throws Exception {
 		Mockito.when(stationdao.addStation(Mockito.any(Station.class))).thenReturn(true);
@@ -49,11 +89,29 @@ public class StationControllerTest {
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		MockHttpServletResponse response = result.getResponse();
 		assertEquals(HttpStatus.CREATED.value(), response.getStatus());
-		assertEquals("http://localhost/stations/11",
+		assertEquals("http://localhost/stations/Eleven",
 				response.getHeader(HttpHeaders.LOCATION));
+	}	
+	@Test
+	public void getStationByHDenabled_Test() throws Exception {
+		
+		Mockito.when(stationdao.getStationByHDenabled(Mockito.anyString())).thenReturn(mockStations);
+		RequestBuilder request = MockMvcRequestBuilders
+				.get("/stations/hd?enabled=true")
+				.accept(MediaType.APPLICATION_JSON);		
+		MvcResult result = mockMvc.perform(request).andReturn();
+		assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+	}
+	@Test
+	public void removeStation_Test() throws Exception {	
+		
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.delete("/stations/Fifteen")
+				.accept(MediaType.APPLICATION_JSON);	
+	   MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
+	   assertEquals(200, mvcResult.getResponse().getStatus());
+	   assertEquals(mvcResult.getResponse().getContentAsString(), "Station deleted successfully");
 	}
 	
-	
 }
-
 

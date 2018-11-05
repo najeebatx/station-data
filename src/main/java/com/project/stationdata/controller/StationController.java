@@ -38,4 +38,61 @@ public class StationController {
 		
 		return ResponseEntity.noContent().build();
 	}
+	@GetMapping(path="/stations/{id}",produces="application/json")
+	public ResponseEntity<Station>  getStation(@PathVariable("id") String id){	
+		return new ResponseEntity<Station>
+		(stationDao.getStation(id),HttpStatus.OK);
+		
+	}
+	@GetMapping(path="/stations",produces="application/json")
+	public ResponseEntity<List<Station>>  getAllStations(){	
+		List<Station> stationList=stationDao.getAllStations();
+		return new ResponseEntity<List<Station>>
+		(stationList,HttpStatus.OK);
+		
+	}
+	@GetMapping(path="/stations/name/{name}",produces="application/json")
+	public ResponseEntity<List<Station>> getStationByName(@PathVariable("name") String name){
+		return new ResponseEntity<List<Station>>
+		(stationDao.getStationByName(name),HttpStatus.OK);
+		
+	}
+	@GetMapping(path="/stations/hd",produces="application/json")
+	public ResponseEntity<List<Station>> getStationByHDenabled(@RequestParam("enabled") String enabled){
+		return new ResponseEntity<List<Station>>
+		(stationDao.getStationByHDenabled(enabled),HttpStatus.OK);
+		
+	}
+
+	
+	@PatchMapping(path="/stations/{id}",consumes="application/json")
+	  public ResponseEntity<String> patchStation(@PathVariable("id") String id, @RequestBody Station partialStation) {
+		 Station oldStation = stationDao.getStation(id);
+		
+	     if(partialStation.getHdEnabled()!=null) {
+	    	 oldStation.setHdEnabled(partialStation.getHdEnabled());
+	     }
+	     if(partialStation.getName()!=null) {
+	    	 oldStation.setName(partialStation.getName());
+	     }
+	     if(partialStation.getCallSign()!=null) {
+	    	 oldStation.setCallSign(partialStation.getCallSign());
+	     }
+	     int update=stationDao.updateStation(oldStation);
+	 	if(update>0){
+	 		return new ResponseEntity<String>("Station update successfully",HttpStatus.OK);
+		}
+		
+		return ResponseEntity.noContent().build();
+	     
+	     
+	}
+		
+	@DeleteMapping("/stations/{id}")
+	public ResponseEntity<String> removeStation(@PathVariable String id){
+		stationDao.removeStation(id);
+		return new ResponseEntity<String>
+		("Station deleted successfully", HttpStatus.OK);
+		
+	}
 }
