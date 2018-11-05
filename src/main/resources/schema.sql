@@ -1,4 +1,3 @@
-drop table if exists station
 create table station
 (
    stationId varchar(255) not null,
