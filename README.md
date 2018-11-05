@@ -12,3 +12,5 @@ jdbc url: jdbc:h2:mem:testdb
 docker run: docker run -p 9090:9090 station:v1
 
 Jacoco test coverage report is in $base_dir/build/reports/jacoco/test/html/
+
+Work in progress: Swagger documentation, pagination, api versioning 
