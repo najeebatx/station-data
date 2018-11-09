@@ -26,7 +26,7 @@ public class StationController {
 	@Autowired
 	StationDao stationDao;
 	
-	@RequestMapping(method=RequestMethod.POST, path="/stations",consumes="application/json")
+	@RequestMapping(method=RequestMethod.POST, path="/api/v1/stations",consumes="application/json")
 	public ResponseEntity<String> addStation(@RequestBody Station station){
 		boolean isAdded=stationDao.addStation(station);
 		
@@ -35,29 +35,29 @@ public class StationController {
 					.buildAndExpand(station.getStationId()).toUri();
 			return ResponseEntity.created(location).build();
 		}
-		
-		return ResponseEntity.noContent().build();
+			
+			return ResponseEntity.noContent().build();
 	}
-	@GetMapping(path="/stations/{id}",produces="application/json")
+	@GetMapping(path="/api/v1/stations/{id}",produces="application/json")
 	public ResponseEntity<Station>  getStation(@PathVariable("id") String id){	
 		return new ResponseEntity<Station>
 		(stationDao.getStation(id),HttpStatus.OK);
 		
 	}
-	@GetMapping(path="/stations",produces="application/json")
+	@GetMapping(path="/api/v1/stations",produces="application/json")
 	public ResponseEntity<List<Station>>  getAllStations(){	
 		List<Station> stationList=stationDao.getAllStations();
 		return new ResponseEntity<List<Station>>
 		(stationList,HttpStatus.OK);
 		
 	}
-	@GetMapping(path="/stations/name/{name}",produces="application/json")
+	@GetMapping(path="/api/v1/stations/name/{name}",produces="application/json")
 	public ResponseEntity<List<Station>> getStationByName(@PathVariable("name") String name){
 		return new ResponseEntity<List<Station>>
 		(stationDao.getStationByName(name),HttpStatus.OK);
 		
 	}
-	@GetMapping(path="/stations/hd",produces="application/json")
+	@GetMapping(path="/api/v1/stations/hd",produces="application/json")
 	public ResponseEntity<List<Station>> getStationByHDenabled(@RequestParam("enabled") String enabled){
 		return new ResponseEntity<List<Station>>
 		(stationDao.getStationByHDenabled(enabled),HttpStatus.OK);
@@ -65,7 +65,7 @@ public class StationController {
 	}
 
 	
-	@PatchMapping(path="/stations/{id}",consumes="application/json")
+	@PatchMapping(path="/api/v1/stations/{id}",consumes="application/json")
 	  public ResponseEntity<String> patchStation(@PathVariable("id") String id, @RequestBody Station partialStation) {
 		 Station oldStation = stationDao.getStation(id);
 		
@@ -88,7 +88,7 @@ public class StationController {
 	     
 	}
 		
-	@DeleteMapping("/stations/{id}")
+	@DeleteMapping("/api/v1/stations/{id}")
 	public ResponseEntity<String> removeStation(@PathVariable String id){
 		stationDao.removeStation(id);
 		return new ResponseEntity<String>

@@ -1,0 +1,1 @@
+insert into station values('One','Pop','Y','KXYR');

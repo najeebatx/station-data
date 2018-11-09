@@ -50,7 +50,7 @@ public class StationControllerTest {
 	public void getStationById_Test() throws Exception {		
 		Mockito.when(stationdao.getStation(Mockito.anyString())).thenReturn(mockStation1);
 		RequestBuilder request = MockMvcRequestBuilders
-				.get("/stations/Nine")
+				.get("/api/v1/stations/Nine")
 				.accept(MediaType.APPLICATION_JSON);		
 		MvcResult result = mockMvc.perform(request).andReturn();
 		String expected = "{\"stationId\":\"Nine\",\"name\":\"Jazz\",\"hdEnabled\":true,\"callSign\":\"KUII\"}";
@@ -60,7 +60,7 @@ public class StationControllerTest {
 	public void getStationByName_Test() throws Exception {		
 		Mockito.when(stationdao.getStationByName(Mockito.anyString())).thenReturn(mockStations);
 		RequestBuilder request = MockMvcRequestBuilders
-				.get("/stations/name/Jazz")
+				.get("/api/v1/stations/name/Jazz")
 				.accept(MediaType.APPLICATION_JSON);		
 		MvcResult result = mockMvc.perform(request).andReturn();
 		String expected = "[{\"stationId\":\"Nine\",\"name\":\"Jazz\",\"hdEnabled\":true,\"callSign\":\"KUII\"},"
@@ -72,7 +72,7 @@ public class StationControllerTest {
 		
 		Mockito.when(stationdao.getAllStations()).thenReturn(mockStations);
 		RequestBuilder request = MockMvcRequestBuilders
-				.get("/stations")
+				.get("/api/v1/stations")
 				.accept(MediaType.APPLICATION_JSON);		
 		MvcResult result = mockMvc.perform(request).andReturn();
 		String expected = "[{\"stationId\":\"Nine\",\"name\":\"Jazz\",\"hdEnabled\":true,\"callSign\":\"KUII\"},"
@@ -82,14 +82,14 @@ public class StationControllerTest {
 	@Test
 	public void addStation_Test() throws Exception {
 		Mockito.when(stationdao.addStation(Mockito.any(Station.class))).thenReturn(true);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/stations")
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/v1/stations")
 				.accept(MediaType.APPLICATION_JSON)
 				.content(mockStation)
 				.contentType(MediaType.APPLICATION_JSON);
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		MockHttpServletResponse response = result.getResponse();
 		assertEquals(HttpStatus.CREATED.value(), response.getStatus());
-		assertEquals("http://localhost/stations/Eleven",
+		assertEquals("http://localhost/api/v1/stations/Eleven",
 				response.getHeader(HttpHeaders.LOCATION));
 	}	
 	@Test
@@ -97,7 +97,7 @@ public class StationControllerTest {
 		
 		Mockito.when(stationdao.getStationByHDenabled(Mockito.anyString())).thenReturn(mockStations);
 		RequestBuilder request = MockMvcRequestBuilders
-				.get("/stations/hd?enabled=true")
+				.get("/api/v1/stations/hd?enabled=true")
 				.accept(MediaType.APPLICATION_JSON);		
 		MvcResult result = mockMvc.perform(request).andReturn();
 		assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
@@ -106,7 +106,7 @@ public class StationControllerTest {
 	public void removeStation_Test() throws Exception {	
 		
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.delete("/stations/Fifteen")
+				.delete("/api/v1/stations/Fifteen")
 				.accept(MediaType.APPLICATION_JSON);	
 	   MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
 	   assertEquals(200, mvcResult.getResponse().getStatus());
