@@ -113,5 +113,18 @@ public class StationControllerTest {
 	   assertEquals(mvcResult.getResponse().getContentAsString(), "Station deleted successfully");
 	}
 	
+	@Test
+	public void patchStation_Test() throws Exception {
+		Mockito.when(stationdao.updateStation(Mockito.any(Station.class))).thenReturn(1);
+		Mockito.when(stationdao.getStation(Mockito.anyString())).thenReturn(mockStation1);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch("/api/v1/stations/Eleven")
+				.accept(MediaType.APPLICATION_JSON)
+				.content(mockStation)
+				.contentType(MediaType.APPLICATION_JSON);
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		MockHttpServletResponse response = result.getResponse();
+		assertEquals(HttpStatus.OK.value(), response.getStatus());
+	}	
+
 }
 
